@@ -107,7 +107,7 @@ func (u LinuxNetDevPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 }
 
-var skipInterfaceRegex = regexp.MustCompile(`^(veth|br-|docker|bond)`)
+var skipInterfaceRegex = regexp.MustCompile(`^(veth|br-|docker|cni|flannel|bond)`)
 
 func (u LinuxNetDevPlugin) FetchMetrics() (map[string]float64, error) {
 	res := map[string]float64{}
