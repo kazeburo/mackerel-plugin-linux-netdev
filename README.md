@@ -5,6 +5,18 @@ mackerel metric plugin for linux proc/net/dev. collect errors, droppped and pack
 ## Usage
 
 ```
+Usage:
+  mackerel-plugin-linux-netdev [OPTIONS]
+
+Application Options:
+  -v, --version            Show version
+      --ignore-interfaces= Regexp for interfaces name to ignore
+
+Help Options:
+  -h, --help               Show this help message
+```
+
+```
 $ ./mackerel-plugin-linux-netdev
 linux-netdev.errors.all.tx      0       1634886461
 linux-netdev.errors.eth0.tx     0       1634886461

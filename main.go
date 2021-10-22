@@ -21,7 +21,9 @@ import (
 var version string
 
 type cmdOpts struct {
-	Version bool `short:"v" long:"version" description:"Show version"`
+	Version                bool   `short:"v" long:"version" description:"Show version"`
+	IgnoreInterfaces       string `long:"ignore-interfaces" description:"Regexp for interfaces name to ignore"`
+	ignoreInterfacesRegexp *regexp.Regexp
 }
 
 func fileExists(filename string) bool {
@@ -75,9 +77,6 @@ func readStats(filename string) (int64, map[string]procfs.NetDevLine, error) {
 
 type LinuxNetDevPlugin struct{}
 
-// linux-netdev.errors.#.{errs_rx,drop_rx,errs_tx,errs_tx}
-// linux-netdev.pps.#.{tx,rx}
-
 func (u LinuxNetDevPlugin) GraphDefinition() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
 		"linux-netdev.errors.#": {
@@ -107,8 +106,6 @@ func (u LinuxNetDevPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 }
 
-var skipInterfaceRegex = regexp.MustCompile(`^(veth|br-|docker|cni|flannel|bond)`)
-
 func (u LinuxNetDevPlugin) FetchMetrics() (map[string]float64, error) {
 	res := map[string]float64{}
 	pfs, err := procfs.NewDefaultFS()
@@ -124,7 +121,7 @@ func (u LinuxNetDevPlugin) FetchMetrics() (map[string]float64, error) {
 		if i.Name == "lo" {
 			continue
 		}
-		if skipInterfaceRegex.MatchString(i.Name) {
+		if opts.IgnoreInterfaces != "" && opts.ignoreInterfacesRegexp.MatchString(i.Name) {
 			continue
 		}
 		cur[i.Name] = i
@@ -223,8 +220,9 @@ func main() {
 	os.Exit(_main())
 }
 
+var opts = cmdOpts{}
+
 func _main() int {
-	opts := cmdOpts{}
 	psr := flags.NewParser(&opts, flags.HelpFlag|flags.PassDoubleDash)
 	_, err := psr.Parse()
 	if opts.Version {
@@ -240,6 +238,10 @@ Compiler: %s %s
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		return 1
+	}
+
+	if opts.IgnoreInterfaces != "" {
+		opts.ignoreInterfacesRegexp = regexp.MustCompile(opts.IgnoreInterfaces)
 	}
 
 	u := LinuxNetDevPlugin{}
