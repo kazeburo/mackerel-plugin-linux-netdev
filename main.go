@@ -167,41 +167,41 @@ func (u LinuxNetDevPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 		var val float64
 		// tx_errors
-		val = float64(c.TxErrors - p.TxErrors)
+		val = float64(c.TxErrors) - float64(p.TxErrors)
 		if val < 0 {
 			val = 0
 		}
 		res[fmt.Sprintf("linux-netdev.errors.%s.tx", c.Name)] = val / timeDiff
 		allTxErrors += val
 		// tx_dropped
-		val = float64(c.TxDropped - p.TxDropped)
+		val = float64(c.TxDropped) - float64(p.TxDropped)
 		if val < 0 {
 			val = 0
 		}
 		res[fmt.Sprintf("linux-netdev.dropped.%s.tx", c.Name)] = val / timeDiff
 		allTxDropped += val
 		// rx_errors
-		val = float64(c.RxErrors - p.RxErrors)
+		val = float64(c.RxErrors) - float64(p.RxErrors)
 		if val < 0 {
 			val = 0
 		}
 		res[fmt.Sprintf("linux-netdev.errors.%s.rx", c.Name)] = val / timeDiff
 		allRxErrors += val
 		// rx_dropped
-		val = float64(c.RxDropped - p.RxDropped)
+		val = float64(c.RxDropped) - float64(p.RxDropped)
 		if val < 0 {
 			val = 0
 		}
 		res[fmt.Sprintf("linux-netdev.dropped.%s.rx", c.Name)] = val / timeDiff
 		allRxDropped += val
 		// tx_packets
-		val = float64(c.TxPackets - p.TxPackets)
+		val = float64(c.TxPackets) - float64(p.TxPackets)
 		if val < 0 {
 			val = 0
 		}
 		res[fmt.Sprintf("linux-netdev.pps.%s.tx", c.Name)] = val / timeDiff
 		// tx_packets
-		val = float64(c.RxPackets - p.RxPackets)
+		val = float64(c.RxPackets) - float64(p.RxPackets)
 		if val < 0 {
 			val = 0
 		}
